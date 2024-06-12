@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  db:
+    image: mongo:7
+    container_name: mastergas_db
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo:/data/db
