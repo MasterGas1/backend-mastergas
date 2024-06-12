@@ -1,0 +1,5 @@
+Dockerfile
+docker-composer.yml
+.git
+node_modules/
+dist
