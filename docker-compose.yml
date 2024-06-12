@@ -6,7 +6,7 @@ services:
     container_name: mastergas_db
     restart: always
     environment:
-      MONGO_INITDB_DATABASE: ${DB_NAME}
+      MONGODB_DATABASE: mastergas
     ports:
       - 27017:27017
     volumes:
