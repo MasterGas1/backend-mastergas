@@ -15,7 +15,7 @@ export class RoleService {
   ){}
 
 
-  async create(createRoleDto: CreateRoleDto) {
+  async create(createRoleDto: CreateRoleDto): Promise<Role | BadRequestException> {
       const roleExist = await this.roleModel.findOne({name: createRoleDto.name})
       
       if(roleExist) {
@@ -25,13 +25,13 @@ export class RoleService {
       return await this.roleModel.create(createRoleDto);
   }
 
-  async findAll() {
+  async findAll(): Promise<Role[]> {
     const roles = await this.roleModel.find();
 
     return roles;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Role | BadRequestException> {
     const role = await this.roleModel.findById(id);
 
     if (!role) {
@@ -41,7 +41,7 @@ export class RoleService {
     return role;
   }
 
-  async update(id: string, updateRoleDto: UpdateRoleDto) {
+  async update(id: string, updateRoleDto: UpdateRoleDto): Promise<Role | BadRequestException> {
     const roleExist = await this.roleModel.findById(id);
     if (!roleExist) {
       throw new BadRequestException('Role no existe')

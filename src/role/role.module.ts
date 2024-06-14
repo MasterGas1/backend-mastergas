@@ -16,6 +16,7 @@ import { Role, RoleSchema } from './entities/role.entity';
         schema: RoleSchema
       }
     ])
-  ]
+  ],
+  exports: [RoleService]
 })
 export class RoleModule {}
