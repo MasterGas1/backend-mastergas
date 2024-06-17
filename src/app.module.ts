@@ -8,9 +8,15 @@ import { RoleModule } from './role/role.module';
   imports: [
     ConfigModule.forRoot(),
 
-    MongooseModule.forRoot(`mongodb://localhost:27017/${process.env.DB_NAME}`),
+    MongooseModule.forRoot(
+      process.env.NODE_ENV === "test"
+      ? `mongodb://localhost:27017/${process.env.DB_NAME_TEST}`
+      : `mongodb://localhost:27017/${process.env.DB_NAME}`
+    ),
     
     RoleModule
   ]
 })
+
+
 export class AppModule {}

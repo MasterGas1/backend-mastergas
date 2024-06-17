@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 import { Role } from './entities/role.entity';
 
@@ -87,20 +87,20 @@ describe('RoleService', () => {
       expect(model.findById).toHaveBeenCalledWith('someId');
     })
 
-    it('should return BadRequestException when given an invalid ID', async () => {
+    it('should return NotFoundException when given an invalid ID', async () => {
       jest.spyOn(model, 'findById').mockResolvedValue(null);
 
-      await expect(service.findOne('invalidId')).rejects.toThrow(BadRequestException);
+      await expect(service.findOne('invalidId')).rejects.toThrow(NotFoundException);
       expect(model.findById).toHaveBeenCalledWith('invalidId');
     });
   })
 
   describe('update', () => {
-   it('should throw BadRequestException if the role does not exist', async () => {
+   it('should throw NotFoundException if the role does not exist', async () => {
     const updateDto: UpdateRoleDto = { name: 'UpdatedRole' };
     jest.spyOn(model, 'findById').mockResolvedValue(null);
 
-    await expect(service.update('invalidId', updateDto)).rejects.toThrow(BadRequestException);
+    await expect(service.update('invalidId', updateDto)).rejects.toThrow(NotFoundException);
     expect(model.findById).toHaveBeenCalledWith('invalidId');
    })
 
@@ -133,10 +133,10 @@ describe('RoleService', () => {
   })
 
   describe('delete', () => {
-    it('should throw BadRequestException if the role does not exist', async () => {
+    it('should throw NotFoundException if the role does not exist', async () => {
       jest.spyOn(model, 'findById').mockResolvedValue(null);
 
-      await expect(service.remove('invalidId')).rejects.toThrow(BadRequestException);
+      await expect(service.remove('invalidId')).rejects.toThrow(NotFoundException);
       expect(model.findById).toHaveBeenCalledWith('invalidId');
     })
 

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
@@ -35,7 +35,7 @@ export class RoleService {
     const role = await this.roleModel.findById(id);
 
     if (!role) {
-      throw new BadRequestException('Role no existe')
+      throw new NotFoundException('Role no existe')
     }
 
     return role;
@@ -44,7 +44,7 @@ export class RoleService {
   async update(id: string, updateRoleDto: UpdateRoleDto): Promise<Role | BadRequestException> {
     const roleExist = await this.roleModel.findById(id);
     if (!roleExist) {
-      throw new BadRequestException('Role no existe')
+      throw new NotFoundException('Role no existe')
     }
 
     const roleRepeated = await this.roleModel.findOne({name: updateRoleDto.name})
@@ -62,7 +62,7 @@ export class RoleService {
     const category = await this.roleModel.findById(id);
 
     if (!category) {
-      throw new BadRequestException('Role no existe')
+      throw new NotFoundException('Role no existe')
     }
 
     await category.deleteOne();
