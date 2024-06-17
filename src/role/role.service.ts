@@ -69,4 +69,8 @@ export class RoleService {
 
     return {}
   }
+
+  async removeAllCollections() {
+    await this.roleModel.deleteMany({});
+  }
 }

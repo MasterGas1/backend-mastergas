@@ -17,6 +17,9 @@ import { Role, RoleSchema } from './entities/role.entity';
       }
     ])
   ],
-  exports: [RoleService]
+  exports: [
+    RoleService,
+    MongooseModule
+  ]
 })
 export class RoleModule {}
