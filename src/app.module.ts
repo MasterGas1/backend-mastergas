@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService} from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { RoleModule } from './role/role.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -14,7 +15,9 @@ import { RoleModule } from './role/role.module';
       : `mongodb://localhost:27017/${process.env.DB_NAME}`
     ),
     
-    RoleModule
+    RoleModule,
+    
+    SeedModule
   ]
 })
 
