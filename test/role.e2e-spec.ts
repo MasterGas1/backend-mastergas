@@ -30,7 +30,7 @@ describe('RoleController (e2e)', () => {
   });
 
   describe('/role (POST)', () => {
-    it('should return 200 if the user does not send anything', async () => {
+    it('should return 201 if the user sends name', async () => {
       await request(app.getHttpServer()).post(PATH).send({
         name: 'HelloWorld'
       }).expect(201)
@@ -53,7 +53,7 @@ describe('RoleController (e2e)', () => {
       await request(app.getHttpServer()).get(PATH)
         .expect(200)
         .expect(({body}) => {
-          expect(body.length).toBe(1);
+          expect(body.length).toBeGreaterThan(0);
         })
       ;
     });

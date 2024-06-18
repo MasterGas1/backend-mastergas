@@ -2,8 +2,8 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { RoleService } from 'src/role/role.service';
-import { Role } from 'src/role/entities/role.entity';
+import { RoleService } from '../role/role.service';
+import { Role } from '../role/entities/role.entity';
 
 import { roles } from './data/seed-data';
 
