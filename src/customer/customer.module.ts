@@ -7,8 +7,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CustomerService } from './customer.service';
 import { CustomerController } from './customer.controller';
 
-import { User, UserSchema } from 'src/user/entities/user.entity';
-import { RoleModule } from 'src/role/role.module';
+import { User, UserSchema } from '../user/entities/user.entity';
+import { RoleModule } from '../role/role.module';
 
 
 @Module({

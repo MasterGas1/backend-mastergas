@@ -1,13 +1,13 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { ConfigModule, ConfigService} from '@nestjs/config';
+import { ConfigModule} from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { JwtService } from '@nestjs/jwt';
 
 import { RoleModule } from './role/role.module';
 import { SeedModule } from './seed/seed.module';
 import { UserModule } from './user/user.module';
 import { CustomerModule } from './customer/customer.module';
 import { validateAuthorizationMiddleware } from './common/middlewares/validateAuthorization.middleware';
-import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [

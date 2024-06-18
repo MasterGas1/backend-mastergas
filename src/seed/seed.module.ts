@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { SeedService } from './seed.service';
 import { SeedController } from './seed.controller';
 
-import { RoleModule } from 'src/role/role.module';
+import { RoleModule } from '../role/role.module';
 
 @Module({
   controllers: [SeedController],
