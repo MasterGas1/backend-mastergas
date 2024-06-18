@@ -11,7 +11,6 @@ export class validateAuthorizationMiddleware implements NestMiddleware{
         private readonly jwtTokenService: JwtService
     ){}
     use(req: Request, res: Response, next: NextFunction) {
-
         const {authorization} = req.headers
 
         if(!authorization){
