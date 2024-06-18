@@ -1,14 +1,14 @@
 import { Model } from 'mongoose';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { User } from 'src/user/entities/user.entity';
+import { User } from '../user/entities/user.entity';
 
-import { Role } from 'src/role/entities/role.entity';
-import { JwtService } from '@nestjs/jwt';
+import { Role } from '../role/entities/role.entity';
 
 @Injectable()
 export class CustomerService {
@@ -52,8 +52,6 @@ export class CustomerService {
 
     const newUser = await this.userModel.create(userBody);
 
-    const secretKey = process.env.SECRET_KEY || "S3CR3TK3Y$";
-
     const token = this.jwtTokenService.sign({id: newUser._id})
 
     return {name, lastName, token, role: role.name}
@@ -61,7 +59,14 @@ export class CustomerService {
   }
 
   async findOneByToken(userId: string) {
-    const user = await this.userModel.findById(userId);
+
+    const role = await this.roleModel.findOne({name: 'Customer'});
+
+    if (!role) {
+      throw new NotFoundException('Execute seed first')
+    }
+
+    const user = await this.userModel.findOne({_id: userId, roleId: role._id});
 
     if(!user) {
       throw new NotFoundException('User not found')
@@ -84,13 +89,23 @@ export class CustomerService {
     if(!user) {
       throw new NotFoundException('User not found')
     }
+    const isEmailRepeated = await this.userModel.findOne({email: updateCustomer.email, roleId: role._id});
+
+    if ( isEmailRepeated && updateCustomer.email !== undefined ) {
+      throw new BadRequestException('El correo ya existe');
+    }
+
+    const isRfcRepeated = await this.userModel.findOne({rfc: updateCustomer.rfc});
+    if ( isRfcRepeated && updateCustomer.rfc !== undefined ) {
+      throw new BadRequestException('El RFC ya existe');
+    }
 
     if (updateCustomerDto.password) {
       updateCustomer.password = bcrypt.hashSync(updateCustomerDto.password, 10);
     }
 
     user = await this.userModel.findOneAndUpdate({_id: userId, roleId: role._id}, updateCustomer, {new: true})
-      .select('-password -roleId -status -createdAt -updatedAt -__v');
+      .select('-password -roleId -status -createdAt -updatedAt -__v').exec();
 
     return user;
   }
