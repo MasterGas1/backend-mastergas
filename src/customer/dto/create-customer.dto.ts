@@ -31,6 +31,7 @@ export class CreateCustomerDto {
         minLength: 12,
         maxLength: 13
     })
+    @IsString()
     @MinLength(12)
     @MaxLength(13)
     rfc: string
