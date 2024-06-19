@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { MailerService } from '@nestjs-modules/mailer';
 import { hashSync } from 'bcrypt';
 import mongoose, { Model } from 'mongoose';
 
@@ -7,9 +8,15 @@ import { CreateInstallerDto } from './dto/create-installer.dto';
 import { UpdateInstallerDto } from './dto/update-installer.dto';
 
 import { Installer } from './entities/installer.entity';
-import { User } from '../user/entities/user.entity';
-import { Role } from '../role/entities/role.entity';
 import { UpdateStatusInstallerDto } from './dto/update-status-installer.dto';
+
+import { User } from '../user/entities/user.entity';
+
+import { Role } from '../role/entities/role.entity';
+
+import { FROM_EMAIL } from 'src/constants/email';
+
+import { confirmationRegisterInstallerEmail } from 'src/templates/email/confirmationRegisterInstallerEmail';
 
 @Injectable()
 export class InstallerService {
@@ -25,7 +32,9 @@ export class InstallerService {
     private readonly roleModel: Model<Role>,
 
     @InjectConnection() 
-    private readonly connection: mongoose.Connection
+    private readonly connection: mongoose.Connection,
+
+    private readonly mailService: MailerService
   ){}
 
   async create(createInstallerDto: CreateInstallerDto) {
@@ -80,6 +89,13 @@ export class InstallerService {
     } finally {
         session.endSession();
     }
+
+    await this.mailService.sendMail({
+      from: FROM_EMAIL,
+      to: email,
+      subject: "MasterGas23: Confirmación de solicitud",
+      html: confirmationRegisterInstallerEmail(name,lastName)
+    })
 
     return {msg: "Installer was created"};
 
@@ -166,7 +182,7 @@ export class InstallerService {
       await this.userModel.findByIdAndDelete(id, { session });
       
       await this.installerModel.findByIdAndDelete(user.installerId, { session });
-      
+
       await session.commitTransaction();
     } catch (error) {
         await session.abortTransaction();
