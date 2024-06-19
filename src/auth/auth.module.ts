@@ -5,8 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AuthService } from './auth.service';
 
-import { UserModule } from 'src/user/user.module';
-import { RoleModule } from 'src/role/role.module';
+import { UserModule } from '../user/user.module';
+import { RoleModule } from '../role/role.module';
 
 @Module({
   controllers: [AuthController],
