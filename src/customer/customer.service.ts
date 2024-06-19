@@ -126,6 +126,6 @@ export class CustomerService {
     
     await this.userModel.findOneAndDelete({_id: userId, roleId: role._id});
 
-    return "Usuario eliminado"
+    return {msg: 'Usuario eliminado'}
   }
 }
