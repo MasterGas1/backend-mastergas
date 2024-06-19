@@ -8,6 +8,7 @@ import { SeedModule } from './seed/seed.module';
 import { UserModule } from './user/user.module';
 import { CustomerModule } from './customer/customer.module';
 import { validateAuthorizationMiddleware } from './common/middlewares/validateAuthorization.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,7 +26,9 @@ import { validateAuthorizationMiddleware } from './common/middlewares/validateAu
     
     UserModule,
     
-    CustomerModule
+    CustomerModule,
+    
+    AuthModule
   ],
 
   providers: [
