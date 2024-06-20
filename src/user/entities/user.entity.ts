@@ -2,7 +2,7 @@ import mongoose, { Document, mongo } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 import { Role } from "../../role/entities/role.entity";
-import { Installer } from "src/installer/entities/installer.entity";
+import { Installer } from "../../installer/entities/installer.entity";
 
 @Schema()
 export class User extends Document {
@@ -37,7 +37,7 @@ export class User extends Document {
     createdAt: Date
 
     @Prop({
-        enum: ['pending', 'approved', 'denied'],
+        enum: ['pending', 'approved','rejected' ,'blocked', 'active'],
     })
     status: string
 

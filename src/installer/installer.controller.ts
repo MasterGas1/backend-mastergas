@@ -19,8 +19,8 @@ export class InstallerController {
   }
 
   @Get()
-  findAll(@Query('pending') pending: boolean) {
-    return this.installerService.findAll(pending);
+  findAll(@Query('status') status: string) {
+    return this.installerService.findAll(status);
   }
 
   @Get(':id')

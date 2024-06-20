@@ -14,9 +14,9 @@ import { User } from '../user/entities/user.entity';
 
 import { Role } from '../role/entities/role.entity';
 
-import { FROM_EMAIL } from 'src/constants/email';
+import { FROM_EMAIL } from '../constants/email';
 
-import { confirmationRegisterInstallerEmail } from 'src/templates/email/confirmationRegisterInstallerEmail';
+import { confirmationRegisterInstallerEmail } from '../templates/email/confirmationRegisterInstallerEmail';
 
 @Injectable()
 export class InstallerService {
@@ -101,13 +101,19 @@ export class InstallerService {
 
   }
 
-  async findAll(pending: boolean) {
+  async findAll(status: string) {
 
-    const status = pending ? 'pending' : 'approved';
+    if (status !== 'pending' && status !== 'approved' && status !== 'rejected' && status !== undefined) {
+      throw new BadRequestException('Status no valid');
+    }
 
-    const roleId = await this.roleModel.findOne({ name: 'installer' });
+    if (status === undefined) {
+      status = 'pending';
+    }
 
-    const installers = await this.userModel.find({ role_id: roleId, status })
+    const roleId = await this.roleModel.findOne({ name: 'Installer' });
+
+    const installers = await this.userModel.find({roleId: roleId._id, status })
       .populate([
         {
           path: 'installerId',

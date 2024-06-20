@@ -47,7 +47,7 @@ export class CustomerService {
       ...createCustomerDto,
       roleId: role._id,
       password: bcrypt.hashSync(password, 10),
-      status: 'approved'
+      status: 'active'
     }
 
     const newUser = await this.userModel.create(userBody);

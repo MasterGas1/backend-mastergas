@@ -5,8 +5,8 @@ import { InstallerService } from './installer.service';
 import { InstallerController } from './installer.controller';
 import { InstallerSchema } from './entities/installer.entity';
 
-import { RoleModule } from 'src/role/role.module';
-import { UserModule } from 'src/user/user.module';
+import { RoleModule } from '../role/role.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   controllers: [InstallerController],
