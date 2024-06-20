@@ -1,7 +1,8 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, mongo } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 import { Role } from "../../role/entities/role.entity";
+import { Installer } from "../../installer/entities/installer.entity";
 
 @Schema()
 export class User extends Document {
@@ -14,7 +15,9 @@ export class User extends Document {
     @Prop({ required: true })
     rfc: string
 
-    @Prop({ required: true })
+    @Prop({
+        default: ''
+    })
     taxResidence: string
 
     @Prop({ required: true })
@@ -34,15 +37,22 @@ export class User extends Document {
     createdAt: Date
 
     @Prop({
-        enum: ['pending', 'approved', 'denied'],
+        enum: ['pending', 'approved','rejected' ,'blocked', 'active'],
     })
     status: string
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
-        ref: Role.name
+        ref: Role.name,
+        required: true
     })
     roleId: Role
+
+    @Prop({
+        type: mongoose.Schema.Types.ObjectId,
+        ref: Installer.name,
+    })
+    installerId: Installer
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

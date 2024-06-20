@@ -47,7 +47,7 @@ export class CustomerService {
       ...createCustomerDto,
       roleId: role._id,
       password: bcrypt.hashSync(password, 10),
-      status: 'approved'
+      status: 'active'
     }
 
     const newUser = await this.userModel.create(userBody);
@@ -126,6 +126,6 @@ export class CustomerService {
     
     await this.userModel.findOneAndDelete({_id: userId, roleId: role._id});
 
-    return "Usuario eliminado"
+    return {msg: 'Usuario eliminado'}
   }
 }

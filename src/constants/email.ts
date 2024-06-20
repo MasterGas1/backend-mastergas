@@ -1,0 +1,1 @@
+export const FROM_EMAIL = '<no-reply@mastergas23.com>';

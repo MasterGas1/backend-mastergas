@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule} from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { JwtService } from '@nestjs/jwt';
 
 import { RoleModule } from './role/role.module';
@@ -9,6 +10,7 @@ import { UserModule } from './user/user.module';
 import { CustomerModule } from './customer/customer.module';
 import { validateAuthorizationMiddleware } from './common/middlewares/validateAuthorization.middleware';
 import { AuthModule } from './auth/auth.module';
+import { InstallerModule } from './installer/installer.module';
 
 @Module({
   imports: [
@@ -16,9 +18,20 @@ import { AuthModule } from './auth/auth.module';
 
     MongooseModule.forRoot(
       process.env.NODE_ENV === "test"
-      ? `mongodb://localhost:27017/${process.env.DB_NAME_TEST}`
-      : `mongodb://localhost:27017/${process.env.DB_NAME}`
+      ? `mongodb+srv://${process.env.USER_DB}:${process.env.PASSWORD_DB}@${process.env.CLUSTER}.pzvdy2j.mongodb.net/${process.env.DB_NAME_TEST}`
+      : `mongodb+srv://${process.env.USER_DB}:${process.env.PASSWORD_DB}@${process.env.CLUSTER}.pzvdy2j.mongodb.net/${process.env.DB_NAME}`
     ),
+
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.MAIL_HOST,
+        port: Number(process.env.MAIL_PORT),
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASSWORD
+        }
+      }
+    }),
     
     RoleModule,
     
@@ -28,7 +41,9 @@ import { AuthModule } from './auth/auth.module';
     
     CustomerModule,
     
-    AuthModule
+    AuthModule,
+    
+    InstallerModule
   ],
 
   providers: [
