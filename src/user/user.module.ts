@@ -18,7 +18,8 @@ import { User, UserSchema } from './entities/user.entity';
     ])
   ],
   exports: [
-    MongooseModule
+    MongooseModule,
+    UserService
   ]
 })
 export class UserModule {}

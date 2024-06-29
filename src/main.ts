@@ -18,7 +18,9 @@ async function bootstrap() {
   })
   
   const app = await NestFactory.create(AppModule);
-    
+
+  app.enableCors();
+  
   app.setGlobalPrefix("api/v1"); //TODO: set api/v1 in .env
   
   app.useGlobalPipes(
