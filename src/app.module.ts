@@ -11,6 +11,7 @@ import { CustomerModule } from './customer/customer.module';
 import { validateAuthorizationMiddleware } from './common/middlewares/validateAuthorization.middleware';
 import { AuthModule } from './auth/auth.module';
 import { InstallerModule } from './installer/installer.module';
+import { AddressModule } from './address/address.module';
 
 @Module({
   imports: [
@@ -43,7 +44,9 @@ import { InstallerModule } from './installer/installer.module';
     
     AuthModule,
     
-    InstallerModule
+    InstallerModule,
+    
+    AddressModule
   ],
 
   providers: [
@@ -67,6 +70,26 @@ export class AppModule implements NestModule {
         },
         {
           path: '/customer',
+          method: RequestMethod.DELETE
+        },
+        {
+          path: '/address',
+          method: RequestMethod.POST
+        },
+        {
+          path: '/address',
+          method: RequestMethod.PUT
+        },
+        {
+          path: '/address',
+          method: RequestMethod.GET
+        },
+        {
+          path: '/address/:id',
+          method: RequestMethod.GET
+        },
+        {
+          path: '/address/:id',
           method: RequestMethod.DELETE
         }
     );
