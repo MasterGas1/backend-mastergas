@@ -6,8 +6,8 @@ import { hashSync } from 'bcrypt';
 import { RoleService } from '../role/role.service';
 import { Role } from '../role/entities/role.entity';
 
-import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
+import { User } from '../user/entities/user.entity';
+import { UserService } from '../user/user.service';
 
 import { roles, userAdmin } from './data/seed-data';
 

@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { InstallerService } from './installer.service';
 import { InstallerController } from './installer.controller';
-import { InstallerSchema } from './entities/installer.entity';
+import { Installer, InstallerSchema } from './entities/installer.entity';
 
 import { RoleModule } from '../role/role.module';
 import { UserModule } from '../user/user.module';
@@ -14,7 +14,7 @@ import { UserModule } from '../user/user.module';
   imports: [
     MongooseModule.forFeature([
       {
-        name: 'Installer',
+        name: Installer.name,
         schema: InstallerSchema
       }
     ]),
