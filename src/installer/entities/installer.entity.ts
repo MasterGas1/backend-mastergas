@@ -39,7 +39,7 @@ export class Installer extends Document{
     @Prop({
         required: true
     })
-    ownVehicle: string;
+    ownVehicle: boolean;
 
     @Prop({
         required: true,
