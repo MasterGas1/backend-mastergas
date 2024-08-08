@@ -22,6 +22,7 @@ import { UserModule } from '../user/user.module';
     RoleModule,
 
     UserModule
-  ]
+  ],
+  exports: [ InstallerService, MongooseModule]
 })
 export class InstallerModule {}
