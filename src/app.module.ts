@@ -11,6 +11,7 @@ import { CustomerModule } from './customer/customer.module';
 import { validateAuthorizationMiddleware } from './common/middlewares/validateAuthorization.middleware';
 import { AuthModule } from './auth/auth.module';
 import { InstallerModule } from './installer/installer.module';
+import { OrdersModule } from './orders/orders.module';
 import { AddressModule } from './address/address.module';
 
 @Module({
@@ -46,7 +47,10 @@ import { AddressModule } from './address/address.module';
     
     InstallerModule,
     
+    OrdersModule,
+    
     AddressModule
+    
   ],
 
   providers: [
