@@ -12,6 +12,7 @@ import { validateAuthorizationMiddleware } from './common/middlewares/validateAu
 import { AuthModule } from './auth/auth.module';
 import { InstallerModule } from './installer/installer.module';
 import { OrdersModule } from './orders/orders.module';
+import { AddressModule } from './address/address.module';
 
 @Module({
   imports: [
@@ -46,7 +47,10 @@ import { OrdersModule } from './orders/orders.module';
     
     InstallerModule,
     
-    OrdersModule
+    OrdersModule,
+    
+    AddressModule
+    
   ],
 
   providers: [
@@ -70,6 +74,26 @@ export class AppModule implements NestModule {
         },
         {
           path: '/customer',
+          method: RequestMethod.DELETE
+        },
+        {
+          path: '/address',
+          method: RequestMethod.POST
+        },
+        {
+          path: '/address',
+          method: RequestMethod.PUT
+        },
+        {
+          path: '/address',
+          method: RequestMethod.GET
+        },
+        {
+          path: '/address/:id',
+          method: RequestMethod.GET
+        },
+        {
+          path: '/address/:id',
           method: RequestMethod.DELETE
         }
     );
