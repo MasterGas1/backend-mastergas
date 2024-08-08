@@ -24,12 +24,12 @@ export class AddressController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
+  update(@Param('id', ParseMongoIdPipe) id: string, @Body() updateAddressDto: UpdateAddressDto) {
     return this.addressService.update(id, updateAddressDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseMongoIdPipe) id: string) {
     return this.addressService.remove(id);
   }
 }
