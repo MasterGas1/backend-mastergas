@@ -4,7 +4,7 @@ import { SeedService } from './seed.service';
 import { SeedController } from './seed.controller';
 
 import { RoleModule } from '../role/role.module';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   controllers: [SeedController],

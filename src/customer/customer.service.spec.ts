@@ -336,7 +336,7 @@ describe('CustomerService', () => {
       jest.spyOn(modelUser, 'findOneAndDelete').mockResolvedValue(mockCustomer as any);
       
       const result = await customerService.removeByToken('123');
-      expect(result).toEqual("Usuario eliminado");
+      expect(result).toEqual({msg: "Usuario eliminado"});
     })
 
     it('should throw a NotFoundException if the customer does not exist', async () => {

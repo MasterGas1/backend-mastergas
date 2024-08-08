@@ -11,7 +11,7 @@ import { SeedModule } from "../src/seed/seed.module";
 
 import { InstallerModule } from '../src/installer/installer.module';
 
-import { CreateInstallerDto } from "src/installer/dto/create-installer.dto";
+import { CreateInstallerDto } from "../src/installer/dto/create-installer.dto";
 
 describe('User (e2e)', () => {
     let app: INestApplication;
