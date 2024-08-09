@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsIn, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsIn, IsMongoId, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateServiceDto {
     @ApiProperty()
@@ -22,7 +22,7 @@ export class CreateServiceDto {
 
     @ApiProperty()
     @IsOptional()
-    @IsUUID()
+    @IsMongoId()
     fatherServiceId: string
 
     @ApiProperty()
