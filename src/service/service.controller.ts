@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { ServiceService } from './service.service';
@@ -21,8 +21,8 @@ export class ServiceController {
 
   @Get('/rootServices')
   @ApiOkResponse({ type: [ReponseServiceDto] })
-  findAllRootServices() {
-    return this.serviceService.findAllRootServices();
+  findAllRootServices(@Query('available') available: string) {
+    return this.serviceService.findAllRootServices(available);
   }
 
   @Get(':id')

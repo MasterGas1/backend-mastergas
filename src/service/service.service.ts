@@ -51,13 +51,17 @@ export class ServiceService {
     }
   }
 
-  async findAllRootServices() {
-    return await this.ServiceModel.find({$or:[{type: 'root service'},{type: 'root service price'}]}).select('-type -subservicesId -__v -image'); 
+  async findAllRootServices(available: string) {
+    if(available !== undefined) {
+      return await this.ServiceModel.find({$or:[{type: 'root service'},{type: 'root service price'}], available}).select('-subservicesId -__v -available'); 
+    } else {
+      return await this.ServiceModel.find({$or: [{type: 'root service'},{type: 'root service price'}]}).select('-subservicesId -__v');
+    }
   }
 
   async findOne(id: string) {
-    const service = await this.ServiceModel.findById(id).select('-type -__v -image -fatherServiceId')
-    .populate('subservicesId','-fatherServiceId -subservicesId -__v -image -type');
+    const service = await this.ServiceModel.findById(id).select('-type -__v -fatherServiceId')
+    .populate('subservicesId','-fatherServiceId -subservicesId -__v');
 
     if (!service) {
       throw new NotFoundException('Servicio no encontrado');
