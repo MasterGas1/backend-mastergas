@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -33,6 +34,16 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async changePasswordByTokenInEmail(userId: string, password: string) {
+    const user = await this.userModel.findById(userId);
+    
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.userModel.findOneAndUpdate({_id: userId}, {password: bcrypt.hashSync(password, 10)});
   }
 
   removeAllColletions() {

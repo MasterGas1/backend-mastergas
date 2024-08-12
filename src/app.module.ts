@@ -48,7 +48,7 @@ import { AddressModule } from './address/address.module';
     
     InstallerModule,
     
-    ServiceModule
+    ServiceModule,
     
     OrdersModule,
     
@@ -98,6 +98,10 @@ export class AppModule implements NestModule {
         {
           path: '/address/:id',
           method: RequestMethod.DELETE
+        },
+        {
+          path: '/user/changePasswordByTokenInEmail',
+          method: RequestMethod.PUT
         }
     );
   }

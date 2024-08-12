@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
 import { hashSync } from 'bcrypt';
 import mongoose, { Model } from 'mongoose';
@@ -17,6 +18,7 @@ import { Role } from '../role/entities/role.entity';
 import { FROM_EMAIL } from '../constants/email';
 
 import { confirmationRegisterInstallerEmail } from '../templates/email/confirmationRegisterInstallerEmail';
+import { welcomeAndNewPasswordEmail } from 'src/templates/email/welcomeAndNewPasswordEmail';
 
 @Injectable()
 export class InstallerService {
@@ -34,7 +36,9 @@ export class InstallerService {
     @InjectConnection() 
     private readonly connection: mongoose.Connection,
 
-    private readonly mailService: MailerService
+    private readonly mailService: MailerService,
+
+    private readonly jwtTokenService: JwtService
   ){}
 
   async create(createInstallerDto: CreateInstallerDto) {
@@ -166,6 +170,14 @@ export class InstallerService {
     const { status } = updateInstallerStatusDto;
     await this.userModel.findOneAndUpdate({_id: id, roleId: role._id}, { status });
 
+    const token = this.jwtTokenService.sign({id: id})
+
+    if (status === 'approved' && installer.status === 'pending') {
+      this.sendNewPassword(installer.email, installer.name, installer.lastName, token);
+    } else {
+      throw new BadRequestException('Status no valido');
+    }
+
     return {msg: 'Estado actualizado'};
   }
 
@@ -198,5 +210,15 @@ export class InstallerService {
     }
 
     return {msg: 'Instalador eliminado'}
+  }
+
+  async sendNewPassword(email: string, name: string, lastName: string, token: string) {
+
+    await this.mailService.sendMail({
+      from: FROM_EMAIL,
+      to: email,
+      subject: "MasterGas23: Bienvenido a MasterGas23",
+      html: welcomeAndNewPasswordEmail(name,lastName, email, token)
+    })
   }
 }
