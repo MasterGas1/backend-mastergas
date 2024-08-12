@@ -16,6 +16,7 @@ import { JwtModule } from '@nestjs/jwt';
   controllers: [InstallerController],
   providers: [InstallerService],
   imports: [
+
     MongooseModule.forFeature([
       {
         name: Installer.name,
@@ -32,7 +33,7 @@ import { JwtModule } from '@nestjs/jwt';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         return {
-          secret: configService.get('SECRET_KEY_PASSWORD') || 'S3CR3TK3Y$_P455W0RD',
+          secret: configService.get('SECRET_KEY_CHANGE_PASSWORD') || 'S3CR3TK3Y$_P455W0RD',
         }
       }
     }),

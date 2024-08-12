@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordUserDto } from './dto/update-password-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -28,7 +29,7 @@ export class UserController {
   }
 
   @Put('/changePasswordByTokenInEmail')
-  changePasswordByTokenInEmail(@Body('userId') userId: string, @Body('password') password: string) {
+  changePasswordByTokenInEmail(@Body('userId') userId: string, @Body() {password}: UpdatePasswordUserDto) {
     return this.userService.changePasswordByTokenInEmail(userId, password);
   }
 
