@@ -44,6 +44,8 @@ export class UserService {
     }
 
     await this.userModel.findOneAndUpdate({_id: userId}, {password: bcrypt.hashSync(password, 10)});
+
+    return {msg: 'Contraseña actualizada'}
   }
 
   removeAllColletions() {
