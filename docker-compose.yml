@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  mongo1:
+    image: mongo:7
+    container_name: mongo1
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo1:/data/db
+    command: ["mongod", "--replSet", "rs0"]
+
+  mongo2:
+    image: mongo:7
+    container_name: mongo2
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27018:27017
+    volumes:
+      - ./mongo2:/data/db
+    command: ["mongod", "--replSet", "rs0"]
+
+  mongo3:
+    image: mongo:7
+    container_name: mongo3
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27019:27017
+    volumes:
+      - ./mongo3:/data/db
+    command: ["mongod", "--replSet", "rs0"]
+
+  mongo-setup:
+    image: mongo:7
+    container_name: mongo-setup
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+    entrypoint: >
+      bash -c "
+      sleep 10;
+      mongo --host mongo1:27017 <<EOF
+        rs.initiate({
+          _id: 'rs0',
+          members: [
+            { _id: 0, host: 'mongo1:27017' },
+            { _id: 1, host: 'mongo2:27017' },
+            { _id: 2, host: 'mongo3:27017' }
+          ]
+        });
+      EOF
+      "
