@@ -48,7 +48,7 @@ import { AddressModule } from './address/address.module';
     
     InstallerModule,
     
-    ServiceModule
+    ServiceModule,
     
     OrdersModule,
     

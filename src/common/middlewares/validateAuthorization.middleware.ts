@@ -28,6 +28,7 @@ export class validateAuthorizationMiddleware implements NestMiddleware{
     
             next()
         } catch (error) {
+            console.log('Error en el middleware', error)
             throw new BadRequestException('Invalid token')
         }
     }
