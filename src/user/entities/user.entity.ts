@@ -55,6 +55,11 @@ export class User extends Document {
         ref: Installer.name,
     })
     installerId: Installer
+
+    @Prop({
+        default: false
+    })
+    updatePassword: boolean
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

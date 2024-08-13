@@ -109,6 +109,10 @@ export class AppModule implements NestModule {
       {
         path: '/user/changePasswordByTokenInEmail',
         method: RequestMethod.PUT
+      },
+      {
+        path: '/user/getUserStatusAndUpdateByToken',
+        method: RequestMethod.GET
       }
     )
   }

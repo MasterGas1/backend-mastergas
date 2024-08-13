@@ -13,15 +13,15 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.userService.findAll();
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.userService.findOne(+id);
+  // }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
@@ -31,6 +31,11 @@ export class UserController {
   @Put('/changePasswordByTokenInEmail')
   changePasswordByTokenInEmail(@Body('userId') userId: string, @Body() {password}: UpdatePasswordUserDto) {
     return this.userService.changePasswordByTokenInEmail(userId, password);
+  }
+
+  @Get('/getUserStatusAndUpdateByToken')
+  getUserStatusAndUpdateByToken(@Body('userId') userId: string) {
+    return this.userService.getUserStatusAndUpdateByToken(userId);
   }
 
   @Delete(':id')

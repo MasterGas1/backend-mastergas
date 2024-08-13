@@ -168,17 +168,19 @@ export class InstallerService {
     }
 
     const { status } = updateInstallerStatusDto;
-    await this.userModel.findOneAndUpdate({_id: id, roleId: role._id}, { status });
-
-    const token = this.jwtTokenService.sign({id: id})
-
+    
     if (status === 'approved' && installer.status === 'pending') {
+
+      await this.userModel.findOneAndUpdate({_id: id, roleId: role._id}, { status, updatePassword: true });
+
+      const token = this.jwtTokenService.sign({id: id})
+
       this.sendNewPassword(installer.email, installer.name, installer.lastName, token);
     } else {
-      throw new BadRequestException('Status no valido');
+      throw new BadRequestException('Status no valid');
     }
 
-    return {msg: 'Estado actualizado'};
+    return {msg: 'Status actualizado'};
   }
 
   async remove(id: string) {

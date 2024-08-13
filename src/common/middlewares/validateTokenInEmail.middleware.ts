@@ -19,7 +19,7 @@ export class validateTokenInEmailMiddleware implements NestMiddleware{
 
         const token = authorization.replace('Bearer ', '')
 
-        const secretKey =  "S3CR3TK3Y$_P455W0RD"
+        const secretKey =  process.env.SECRET_KEY_CHANGE_PASSWORD || "S3CR3TK3Y$_P455W0RD"
 
         try {
             const encryption = this.jwtTokenService.verify(token, {secret: secretKey}) as {id: string};
