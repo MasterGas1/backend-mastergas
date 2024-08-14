@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -33,6 +34,34 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async changePasswordByTokenInEmail(userId: string, password: string) {
+
+    const user = await this.userModel.findById(userId);
+    
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.status !== 'approved' || !user.updatePassword) {
+      throw new BadRequestException('You can not change your password');
+    }
+
+    await this.userModel.findOneAndUpdate({_id: userId}, {password: bcrypt.hashSync(password, 10), updatePassword: false, status: 'active'});
+
+    return {msg: 'Password updated'}
+  }
+
+  async getUserStatusAndUpdateByToken(userId: string) {
+
+    const user = await this.userModel.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {status: user.status, updatePassword: user.updatePassword}
   }
 
   removeAllColletions() {

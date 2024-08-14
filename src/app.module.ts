@@ -14,10 +14,14 @@ import { InstallerModule } from './installer/installer.module';
 import { ServiceModule } from './service/service.module';
 import { OrdersModule } from './orders/orders.module';
 import { AddressModule } from './address/address.module';
+import { validateTokenInEmailMiddleware } from './common/middlewares/validateTokenInEmail.middleware';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env'
+    }),
 
     MongooseModule.forRoot(
       process.env.NODE_ENV === "test"
@@ -48,7 +52,7 @@ import { AddressModule } from './address/address.module';
     
     InstallerModule,
     
-    ServiceModule
+    ServiceModule,
     
     OrdersModule,
     
@@ -99,6 +103,17 @@ export class AppModule implements NestModule {
           path: '/address/:id',
           method: RequestMethod.DELETE
         }
-    );
+    )
+    .apply(validateTokenInEmailMiddleware)
+    .forRoutes(
+      {
+        path: '/user/changePasswordByTokenInEmail',
+        method: RequestMethod.PUT
+      },
+      {
+        path: '/user/getUserStatusAndUpdateByToken',
+        method: RequestMethod.GET
+      }
+    )
   }
 }
