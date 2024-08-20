@@ -15,6 +15,7 @@ import { ServiceModule } from './service/service.module';
 import { OrdersModule } from './orders/orders.module';
 import { AddressModule } from './address/address.module';
 import { validateTokenInEmailMiddleware } from './common/middlewares/validateTokenInEmail.middleware';
+import { RequestModule } from './request/request.module';
 
 @Module({
   imports: [
@@ -56,7 +57,9 @@ import { validateTokenInEmailMiddleware } from './common/middlewares/validateTok
     
     OrdersModule,
     
-    AddressModule
+    AddressModule,
+    
+    RequestModule
     
   ],
 

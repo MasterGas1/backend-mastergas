@@ -4,7 +4,6 @@ import { IsString,  IsNotEmpty, IsNumber, ValidateNested, IsOptional } from "cla
 class CreateCoordsDto {
     @IsNotEmpty()
     @IsNumber()
-
     latitude:number
 
     @IsNotEmpty()
