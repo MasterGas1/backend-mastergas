@@ -31,7 +31,7 @@ export class ServiceService {
     const isRootServiceExist = await this.ServiceModel.findOne({name: createServiceDto.name, type});
 
     if (isRootServiceExist) {
-      throw new BadRequestException('The name already exists');
+      throw new BadRequestException('El nombre ya existe en este tipo de servicio');
     }
 
     try {
@@ -42,7 +42,9 @@ export class ServiceService {
         name: service.name,
         description: service.description,
         price: service.price,
-        available: service.available
+        available: service.available,
+        type: service.type,
+        image: service.image
       };
 
     } catch (error) {
@@ -53,14 +55,15 @@ export class ServiceService {
 
   async findAllRootServices(available: string) {
     if(available !== undefined) {
-      return await this.ServiceModel.find({$or:[{type: 'root service'},{type: 'root service price'}], available}).select('-subservicesId -__v -available'); 
+      return await this.ServiceModel.find({$or:[{type: 'root service'},{type: 'root service price'}], available}).select('-subservicesId -__v'); 
     } else {
       return await this.ServiceModel.find({$or: [{type: 'root service'},{type: 'root service price'}]}).select('-subservicesId -__v');
     }
   }
 
   async findOne(id: string) {
-    const service = await this.ServiceModel.findById(id).select('-type -__v -fatherServiceId')
+    const service = await this.ServiceModel.findById(id).select('-__v')
+    .populate('fatherServiceId','name')
     .populate('subservicesId','-fatherServiceId -subservicesId -__v');
 
     if (!service) {
@@ -85,7 +88,7 @@ export class ServiceService {
 
     const repeatedService = await this.ServiceModel.findOne({name, type: service.type});
 
-    if (repeatedService) {
+    if (repeatedService && repeatedService._id.toString() !== id) {
       throw new BadRequestException('The name already exists');
     }
 
@@ -136,7 +139,7 @@ export class ServiceService {
     const isSubServiceExist = await this.ServiceModel.findOne({name, type, fatherServiceId});
 
     if (isSubServiceExist) {
-      throw new BadRequestException('The name already exists');
+      throw new BadRequestException('El nombre ya existe en este tipo de servicio');
     }
 
     try {
