@@ -5,6 +5,7 @@ import { InstallerService } from './installer.service';
 import { CreateInstallerDto } from './dto/create-installer.dto';
 import { UpdateInstallerDto } from './dto/update-installer.dto';
 import { UpdateStatusInstallerDto } from './dto/update-status-installer.dto';
+import { UpdateCoordinatesInstallerDto } from './dto/update-coordinates-installer.dto';
 
 import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 
@@ -31,6 +32,11 @@ export class InstallerController {
   @Put('/status/:id')
   updateStatus(@Param('id', ParseMongoIdPipe) id: string, @Body() updateInstallerStatusDto: UpdateStatusInstallerDto) {
     return this.installerService.updateStatus(id, updateInstallerStatusDto);
+  }
+
+  @Put('/coordinates')
+  updateCoordinatesByToken(@Body() updateCoordinatesInstallerDto: UpdateCoordinatesInstallerDto) {
+    return this.installerService.updateCoordinatesByToken(updateCoordinatesInstallerDto);
   }
 
   @Delete(':id')
