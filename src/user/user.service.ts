@@ -24,8 +24,19 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  
+  async findOneByToken(userId: string) {
+
+    const user = (await this.userModel.findOne({_id: userId}).select('-password -status -__v -updatePassword -type -createdAt')).populate({
+      path: 'roleId',
+      select: '-_id'
+    });
+
+    if(!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    return user
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

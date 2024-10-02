@@ -15,5 +15,8 @@ import { Service, ServiceSchema } from './entities/service.entity';
       }
     ])
   ],
+  exports: [
+    MongooseModule
+  ]
 })
 export class ServiceModule {}

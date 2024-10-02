@@ -39,6 +39,12 @@ export class User extends Document {
     createdAt: Date
 
     @Prop({
+        default: 5,
+        type: Number
+    })
+    score: number
+
+    @Prop({
         enum: ['pending', 'approved','rejected' ,'blocked', 'active'],
     })
     status: string
@@ -57,9 +63,22 @@ export class User extends Document {
     installerId: Installer
 
     @Prop({
+        type: { type: String, enum: ['Point'], default: 'Point' }, // GeoJSON type "Point"
+    })
+    type: string;
+
+    @Prop({
+        type: [Number],
+        default: [0,0]
+    })
+    coordinates: []
+
+    @Prop({
         default: false
     })
     updatePassword: boolean
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
+
+UserSchema.index({ coordinates: '2dsphere' })

@@ -15,6 +15,8 @@ import { ServiceModule } from './service/service.module';
 import { OrdersModule } from './orders/orders.module';
 import { AddressModule } from './address/address.module';
 import { validateTokenInEmailMiddleware } from './common/middlewares/validateTokenInEmail.middleware';
+import { RequestModule } from './request/request.module';
+import { NearInstallerModule } from './near-installer/near-installer.module';
 
 @Module({
   imports: [
@@ -56,8 +58,12 @@ import { validateTokenInEmailMiddleware } from './common/middlewares/validateTok
     
     OrdersModule,
     
-    AddressModule
+    AddressModule,
     
+    RequestModule,
+    
+    NearInstallerModule,
+        
   ],
 
   providers: [
@@ -72,6 +78,10 @@ export class AppModule implements NestModule {
       .apply(validateAuthorizationMiddleware)
       .forRoutes(
         {
+          path: '/user',
+          method: RequestMethod.GET
+        },
+        {
           path: '/customer',
           method: RequestMethod.GET
         },
@@ -82,6 +92,10 @@ export class AppModule implements NestModule {
         {
           path: '/customer',
           method: RequestMethod.DELETE
+        },
+        {
+          path: '/installer/coordinates',
+          method: RequestMethod.PUT
         },
         {
           path: '/address',
@@ -102,6 +116,10 @@ export class AppModule implements NestModule {
         {
           path: '/address/:id',
           method: RequestMethod.DELETE
+        },
+        {
+          path: '/request/all/installer/token',
+          method: RequestMethod.GET
         }
     )
     .apply(validateTokenInEmailMiddleware)
