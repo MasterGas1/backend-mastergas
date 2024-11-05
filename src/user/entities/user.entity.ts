@@ -2,7 +2,7 @@ import mongoose, { Document, mongo } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 import { Role } from "../../role/entities/role.entity";
-import { Installer } from "../../installer/entities/installer.entity";
+import { CompanyInstaller } from "../../company-installer/entities/company-installer.entity";
 
 @Schema()
 export class User extends Document {
@@ -58,9 +58,9 @@ export class User extends Document {
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
-        ref: Installer.name,
+        ref: CompanyInstaller.name,
     })
-    installerId: Installer
+    installerId: CompanyInstaller
 
     @Prop({
         type: { type: String, enum: ['Point'], default: 'Point' }, // GeoJSON type "Point"
