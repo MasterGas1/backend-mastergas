@@ -6,7 +6,7 @@ export const roles = [
         name: "Customer"
     },
     {
-        name: "Installer"
+        name: "Company Installer"
     }
 ]
 

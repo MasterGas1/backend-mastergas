@@ -4,23 +4,23 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 
-import { InstallerService } from './installer.service';
-import { InstallerController } from './installer.controller';
-import { Installer, InstallerSchema } from './entities/installer.entity';
+import { CompanyInstallerService } from './company-installer.service';
+import { CompanyInstallerController } from './company-installer.controller';
+import { CompanyInstaller, CompanyInstallerSchema } from './entities/company-installer.entity';
 
 import { RoleModule } from '../role/role.module';
 import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  controllers: [InstallerController],
-  providers: [InstallerService],
+  controllers: [CompanyInstallerController],
+  providers: [CompanyInstallerService],
   imports: [
 
     MongooseModule.forFeature([
       {
-        name: Installer.name,
-        schema: InstallerSchema
+        name: CompanyInstaller.name,
+        schema: CompanyInstallerSchema
       }
     ]),
 
@@ -42,6 +42,6 @@ import { JwtModule } from '@nestjs/jwt';
 
     UserModule
   ],
-  exports: [ InstallerService, MongooseModule]
+  exports: [ CompanyInstallerService, MongooseModule]
 })
-export class InstallerModule {}
+export class CompanyInstallerModule {}
