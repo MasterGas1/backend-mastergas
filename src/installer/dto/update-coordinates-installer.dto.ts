@@ -1,16 +1,15 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsMongoId, IsNumber } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateCoordinatesInstallerDto {
+  @IsMongoId()
+  userId: string;
 
-    @IsOptional()
-    userId: string;
+  @ApiProperty()
+  @IsNumber()
+  longitude: number;
 
-    @ApiProperty()
-    @IsNumber()
-    longitude: number;
-
-    @ApiProperty()
-    @IsNumber()
-    latitude: number;
+  @ApiProperty()
+  @IsNumber()
+  latitude: number;
 }

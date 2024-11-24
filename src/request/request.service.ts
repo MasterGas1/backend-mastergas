@@ -10,11 +10,9 @@ import { User } from 'src/user/entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { NearInstaller } from 'src/near-installer/entities/near-installer.entity';
 import { Service } from 'src/service/entities/service.entity';
-import { roles } from '../seed/data/seed-data';
 
 @Injectable()
 export class RequestService {
-
   constructor(
     @InjectModel(Request.name)
     private readonly requestModel: Model<Request>,
@@ -31,16 +29,18 @@ export class RequestService {
     @InjectModel(Service.name)
     private readonly serviceModel: Model<Service>,
 
-    @InjectConnection() 
+    @InjectConnection()
     private readonly connection: mongoose.Connection,
-
-
   ) {}
 
   async create(createRequestDto: CreateRequestDto) {
+    const {
+      coordinates: { latitude, longitude },
+      customerId,
+      addressName,
+      serviceId,
+    } = createRequestDto;
 
-    const {coordinates: {latitude, longitude}, customerId, addressName, serviceId} = createRequestDto
-    
     const customer = await this.userModel.findById(customerId);
     if (!customer) {
       throw new BadRequestException('User-customer not found');
@@ -51,20 +51,22 @@ export class RequestService {
       throw new BadRequestException('Service not found');
     }
 
-    const {_id} = await this.roleModel.findOne({name: 'Installer'});
-    
-    let nearbyCoords = await this.userModel.find({
-      coordinates: {
-        $near: {
-          $geometry: {
-            type: 'Point',
-            coordinates: [longitude, latitude]
+    const { _id } = await this.roleModel.findOne({ name: 'Installer' });
+
+    const nearbyCoords = await this.userModel
+      .find({
+        coordinates: {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: [longitude, latitude],
+            },
+            $maxDistance: 10000,
           },
-          $maxDistance: 10000 
-        }
-      },
-      roleId: _id
-    }).select('_id');
+        },
+        roleId: _id,
+      })
+      .select('_id');
 
     if (nearbyCoords.length === 0) {
       throw new BadRequestException('No hay instaladores cerca');
@@ -72,19 +74,19 @@ export class RequestService {
 
     const firstInstaller = nearbyCoords.shift()._id;
 
-    const idsInstaller = nearbyCoords.map(installer => installer._id);
+    const idsInstaller = nearbyCoords.map((installer) => installer._id);
 
     const newRequest = {
       serviceId,
       customerId,
       installerId: firstInstaller,
       addressName,
-      coordinates: {latitude, longitude},
-    }
+      coordinates: { latitude, longitude },
+    };
 
     const existRequest = await this.requestModel.findOne({
       serviceId,
-      customerId
+      customerId,
     });
 
     if (existRequest) {
@@ -92,39 +94,39 @@ export class RequestService {
     }
 
     const session = await this.connection.startSession();
-    
+
     try {
+      session.startTransaction();
 
-    session.startTransaction();
+      const request = await (
+        await new this.requestModel(newRequest).save({ session })
+      ).populate([
+        {
+          path: 'serviceId',
+          model: 'Service',
+          select: 'name description _id price',
+        },
+        {
+          path: 'customerId',
+          model: 'User',
+          select: 'name lastName picture score',
+        },
+        {
+          path: 'installerId',
+          model: 'User',
+          select: '_id name lastName picture score',
+        },
+      ]);
 
-    const request = await (await new this.requestModel(newRequest).save({ session })).populate([
-      {
-        path: 'serviceId',
-        model: 'Service',
-        select: 'name description _id price'
-      },
-      {
-        path: 'customerId',
-        model: 'User',
-        select: 'name lastName picture score'
-      },
-      {
-        path: 'installerId',
-        model: 'User',
-        select: 'name lastName picture score'
-      }
-    ]);
+      await new this.nearInstallerModel({
+        requestId: request._id,
+        installersId: idsInstaller,
+      }).save({ session });
 
-    await new this.nearInstallerModel({
-      requestId: request._id,
-      installersId: idsInstaller
-    }).save({ session });
+      await session.commitTransaction();
+      await session.endSession();
 
-    await session.commitTransaction();
-    await session.endSession();
-
-    return request;
-
+      return request;
     } catch (error) {
       await session.abortTransaction();
       await session.endSession();
@@ -133,34 +135,37 @@ export class RequestService {
   }
 
   async findAllByToken(id: string) {
-
-    const role = await this.roleModel.findOne({name: 'Installer'});
+    const role = await this.roleModel.findOne({ name: 'Installer' });
     if (!role) {
       throw new BadRequestException('Execute seed first');
     }
 
-    const installer = await this.userModel.findOne({ _id: id, roleId: role._id });
+    const installer = await this.userModel.findOne({
+      _id: id,
+      roleId: role._id,
+    });
     if (!installer) {
       throw new BadRequestException('Instalador no encontrado');
     }
 
-    return await this.requestModel.find({installerId: id}).populate([
-      {
-        path: 'serviceId',
-        model: 'Service',
-        select: 'name'
-      },
-      {
-        path: 'customerId',
-        model: 'User',
-        select: 'name lastName picture score'
-      }
-    ]).select('-installerId -coordinates -addressName -createdAt');
+    return await this.requestModel
+      .find({ installerId: id })
+      .populate([
+        {
+          path: 'serviceId',
+          model: 'Service',
+          select: 'name',
+        },
+        {
+          path: 'customerId',
+          model: 'User',
+          select: 'name lastName picture score',
+        },
+      ])
+      .select('-installerId -coordinates -addressName -createdAt');
   }
 
-  findOne(id: number) {
-    
-  }
+  findOne(id: number) {}
 
   update(id: number, updateRequestDto: UpdateRequestDto) {
     return `This action updates a #${id} request`;

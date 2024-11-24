@@ -10,7 +10,6 @@ import { UserModule } from 'src/user/user.module';
 import { ServiceModule } from 'src/service/service.module';
 import { RoleModule } from 'src/role/role.module';
 import { NearInstallerModule } from 'src/near-installer/near-installer.module';
-import { NearInstallerSchema } from 'src/near-installer/entities/near-installer.entity';
 
 @Module({
   controllers: [RequestController],
@@ -26,7 +25,8 @@ import { NearInstallerSchema } from 'src/near-installer/entities/near-installer.
     ServiceModule,
     RoleModule,
     ServiceModule,
-    NearInstallerModule 
-  ]
+    NearInstallerModule,
+  ],
+  exports: [MongooseModule, RequestService],
 })
 export class RequestModule {}
