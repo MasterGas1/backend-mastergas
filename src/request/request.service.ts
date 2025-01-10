@@ -10,6 +10,7 @@ import { User } from 'src/user/entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { NearInstaller } from 'src/near-installer/entities/near-installer.entity';
 import { Service } from 'src/service/entities/service.entity';
+import { NearInstallerModule } from '../near-installer/near-installer.module';
 
 @Injectable()
 export class RequestService {
@@ -165,7 +166,75 @@ export class RequestService {
       .select('-installerId -coordinates -addressName -createdAt');
   }
 
-  findOne(id: number) {}
+  async findOneForInstallerByToken(userId: string, requestId: string) {
+    const request = await this.requestModel.findById(requestId).populate([
+      {
+        path: 'serviceId',
+        model: 'Service',
+        select: 'name price',
+      },
+      {
+        path: 'customerId',
+        model: 'User',
+        select: 'name lastName picture score',
+      },
+      {
+        path: 'installerId',
+        model: 'User',
+        select: 'id',
+      },
+    ]);
+
+    if (request.installerId.id !== userId)
+      throw new BadRequestException('Installer is not corrected');
+
+    return request;
+  }
+
+  async acceptRequest(userId: string, requestId: string) {
+    const request = await this.requestModel.findById(requestId).populate([
+      {
+        path: 'installerId',
+        model: 'User',
+        select: 'id',
+      },
+      {
+        path: 'serviceId',
+        model: 'Service',
+        select: 'id price',
+      },
+      {
+        path: 'customerId',
+        model: 'User',
+        select: 'id',
+      },
+    ]);
+
+    if (request.installerId.id !== userId)
+      throw new BadRequestException('Installer is not corrected');
+
+    const nearInstaller = await this.nearInstallerModel.findOne({
+      requestId: request._id,
+    });
+
+    const session = await this.connection.startSession();
+
+    try {
+      session.startTransaction();
+
+      await request.deleteOne({ session });
+
+      await nearInstaller.deleteOne({ session });
+
+      await session.commitTransaction();
+
+      return request;
+    } catch (error) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw error;
+    }
+  }
 
   update(id: number, updateRequestDto: UpdateRequestDto) {
     return `This action updates a #${id} request`;

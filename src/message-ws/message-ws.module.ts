@@ -9,6 +9,7 @@ import { UserModule } from 'src/user/user.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { InstallerModule } from 'src/installer/installer.module';
 import { RequestModule } from 'src/request/request.module';
+import { OrdersModule } from 'src/orders/orders.module';
 
 @Module({
   providers: [MessageWsGateway, MessageWsService],
@@ -17,6 +18,7 @@ import { RequestModule } from 'src/request/request.module';
     InstallerModule,
     AuthModule,
     RequestModule,
+    OrdersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

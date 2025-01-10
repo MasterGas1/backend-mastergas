@@ -124,6 +124,14 @@ export class AppModule implements NestModule {
           path: '/request/all/installer/token',
           method: RequestMethod.GET,
         },
+        {
+          path: '/request/all/installer/token/:requestId',
+          method: RequestMethod.GET,
+        },
+        {
+          path: '/orders/firstOrderInstallerByToken',
+          method: RequestMethod.GET,
+        },
       )
       .apply(validateTokenInEmailMiddleware)
       .forRoutes(
