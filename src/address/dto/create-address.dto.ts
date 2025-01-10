@@ -22,7 +22,7 @@ export class CreateAddressDto {
     
     @ValidateNested()
     @Type(() => CreateCoordsDto)
-    coords:CreateCoordsDto
+    coordinates:CreateCoordsDto
 
     @IsOptional()
     userId: string

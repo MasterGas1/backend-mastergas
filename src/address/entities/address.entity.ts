@@ -33,7 +33,7 @@ export class Address extends Document {
     @Prop({
        type: Coords,
     })
-    coords: Coords;
+    coordinates: Coords;
     
     @Prop({
         required: true,

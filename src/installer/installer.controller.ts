@@ -1,14 +1,24 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Query,
+  Put,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { InstallerService } from './installer.service';
 import { CreateInstallerDto } from './dto/create-installer.dto';
 import { UpdateInstallerDto } from './dto/update-installer.dto';
 import { UpdateStatusInstallerDto } from './dto/update-status-installer.dto';
+import { UpdateCoordinatesInstallerDto } from './dto/update-coordinates-installer.dto';
 
 import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 
-@ApiTags("Installer")
+@ApiTags('Installer')
 @Controller('installer')
 export class InstallerController {
   constructor(private readonly installerService: InstallerService) {}
@@ -29,9 +39,17 @@ export class InstallerController {
   }
 
   @Put('/status/:id')
-  updateStatus(@Param('id', ParseMongoIdPipe) id: string, @Body() updateInstallerStatusDto: UpdateStatusInstallerDto) {
+  updateStatus(
+    @Param('id', ParseMongoIdPipe) id: string,
+    @Body() updateInstallerStatusDto: UpdateStatusInstallerDto,
+  ) {
     return this.installerService.updateStatus(id, updateInstallerStatusDto);
   }
+
+  // @Put('/coordinates')
+  // updateCoordinatesByToken(@Body() updateCoordinatesInstallerDto: UpdateCoordinatesInstallerDto) {
+  //   return this.installerService.updateCoordinatesByToken(updateCoordinatesInstallerDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id', ParseMongoIdPipe) id: string) {

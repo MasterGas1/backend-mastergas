@@ -66,7 +66,7 @@ export class CustomerService {
       throw new NotFoundException('Execute seed first')
     }
 
-    const user = await this.userModel.findOne({_id: userId, roleId: role._id});
+    const user = await this.userModel.findOne({_id: userId, roleId: role._id}).select('-password -status -__v -updatePassword -type');
 
     if(!user) {
       throw new NotFoundException('User not found')

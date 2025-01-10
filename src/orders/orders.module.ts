@@ -14,11 +14,12 @@ import { RoleModule } from 'src/role/role.module';
     MongooseModule.forFeature([
       {
         name: 'Order',
-        schema: OrderSchema
-      }
+        schema: OrderSchema,
+      },
     ]),
     UserModule,
-    RoleModule
-  ]
+    RoleModule,
+  ],
+  exports: [OrdersService, MongooseModule],
 })
 export class OrdersModule {}

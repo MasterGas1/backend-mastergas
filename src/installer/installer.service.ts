@@ -7,6 +7,7 @@ import mongoose, { Model } from 'mongoose';
 
 import { CreateInstallerDto } from './dto/create-installer.dto';
 import { UpdateInstallerDto } from './dto/update-installer.dto';
+import { UpdateCoordinatesInstallerDto } from './dto/update-coordinates-installer.dto';
 
 import { Installer } from './entities/installer.entity';
 import { UpdateStatusInstallerDto } from './dto/update-status-installer.dto';
@@ -181,6 +182,31 @@ export class InstallerService {
     }
 
     return {msg: 'Status actualizado'};
+  }
+
+  async updateCoordinatesByToken(updateCoordinatesInstallerDto: UpdateCoordinatesInstallerDto) {
+    
+    const { userId, longitude, latitude } = updateCoordinatesInstallerDto;
+
+    if ((longitude < -180 || longitude > 180) || (latitude < -90 || latitude > 90)) {
+      throw new BadRequestException('Send coordinates in longitude [-180, 180] and latitude [-90, 90]');
+    }
+
+    const role = await this.roleModel.findOne({name: 'Installer'});
+
+    if (!role) {
+      throw new NotFoundException('Execute seed first');
+    }
+
+    const installer = await this.userModel.findOne({_id: userId, roleId: role._id});
+
+    if (!installer) {
+      throw new NotFoundException('Instalador no encontrado');
+    }
+
+    await this.userModel.findOneAndUpdate({_id: userId}, { coordinates: [longitude, latitude] });
+
+    return {msg: 'Coordenadas actualizadas'}
   }
 
   async remove(id: string) {
