@@ -1,6 +1,6 @@
 import {Schema, Prop, SchemaFactory} from '@nestjs/mongoose';
 import mongoose, {Document} from 'mongoose';
-import { Installer } from 'src/installer/entities/installer.entity';
+import { CompanyInstaller } from 'src/company-installer/entities/company-installer.entity';
 import { User } from 'src/user/entities/user.entity';
 
 @Schema()
@@ -15,10 +15,10 @@ export class Order extends Document {
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
-        ref: Installer.name,
+        ref: CompanyInstaller.name,
         required: true
     })
-    installerId: Installer
+    installerId: CompanyInstaller
 
     @Prop({
         type: mongoose.Schema.Types.ObjectId,
