@@ -5,12 +5,12 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { hashSync } from 'bcrypt';
 import mongoose, { Model } from 'mongoose';
 
-import { CreateInstallerDto } from './dto/create-installer.dto';
-import { UpdateInstallerDto } from './dto/update-installer.dto';
+import { CreateCompanyInstallerInstallerDto } from './dto/create-company-installer.dto';
+import { UpdateCompanyInstallerDto } from './dto/update-company-installer.dto';
 import { UpdateCoordinatesInstallerDto } from './dto/update-coordinates-installer.dto';
 
-import { Installer } from './entities/installer.entity';
-import { UpdateStatusInstallerDto } from './dto/update-status-installer.dto';
+import { CompanyInstaller } from './entities/company-installer.entity';
+import { UpdateStatusCompanyInstallerInstallerDto } from './dto/update-status-company-installer.dto';
 
 import { User } from '../user/entities/user.entity';
 
@@ -22,11 +22,11 @@ import { confirmationRegisterInstallerEmail } from '../templates/email/confirmat
 import { welcomeAndNewPasswordEmail } from 'src/templates/email/welcomeAndNewPasswordEmail';
 
 @Injectable()
-export class InstallerService {
+export class CompanyInstallerService {
 
   constructor(
-    @InjectModel(Installer.name)
-    private readonly installerModel: Model<Installer>,
+    @InjectModel(CompanyInstaller.name)
+    private readonly companyInstaller: Model<CompanyInstaller>,
 
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
@@ -42,7 +42,7 @@ export class InstallerService {
     private readonly jwtTokenService: JwtService
   ){}
 
-  async create(createInstallerDto: CreateInstallerDto) {
+  async create(createInstallerDto: CreateCompanyInstallerInstallerDto) {
     const {installer, ...user} = createInstallerDto;
 
     const {email, rfc, name, lastName} = user;
@@ -50,7 +50,7 @@ export class InstallerService {
     const session = await this.connection.startSession();
 
     
-    const role = await this.roleModel.findOne({ name: 'Installer' });
+    const role = await this.roleModel.findOne({ name: 'Company Installer' });
 
 
     if (!role) {
@@ -71,7 +71,7 @@ export class InstallerService {
 
     try {
 
-    const newInstaller = new this.installerModel(installer)
+    const newInstaller = new this.companyInstaller(installer)
 
     await newInstaller.save({ session });
 
@@ -123,7 +123,7 @@ export class InstallerService {
         {
           path: 'installerId',
           select: 'companyName -_id',
-          model: Installer.name
+          model: CompanyInstaller.name
         }
       ])
       .select('-password -roleId -__v');
@@ -143,7 +143,7 @@ export class InstallerService {
       },
       {
         path: 'installerId',
-        model: Installer.name,
+        model: CompanyInstaller.name,
         select: '-password -status -__v -_id'
       }
     ]);
@@ -155,7 +155,7 @@ export class InstallerService {
     return installer
   }
 
-  async updateStatus(id: string, updateInstallerStatusDto: UpdateStatusInstallerDto) {
+  async updateStatus(id: string, updateInstallerStatusDto: UpdateStatusCompanyInstallerInstallerDto) {
     const role = await this.roleModel.findOne({name: 'Installer'});
 
     if (!role) {
@@ -227,7 +227,7 @@ export class InstallerService {
     try {
       await this.userModel.findByIdAndDelete(id, { session });
       
-      await this.installerModel.findByIdAndDelete(user.installerId, { session });
+      await this.companyInstaller.findByIdAndDelete(user.installerId, { session });
 
       await session.commitTransaction();
     } catch (error) {

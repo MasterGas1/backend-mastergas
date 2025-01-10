@@ -9,9 +9,9 @@ import { CustomerModule } from "../src/customer/customer.module";
 
 import { SeedModule } from "../src/seed/seed.module";
 
-import { InstallerModule } from '../src/installer/installer.module';
+import { CompanyInstallerModule } from '../src/company-installer/company-installer.module';
 
-import { CreateInstallerDto } from "../src/installer/dto/create-installer.dto";
+import { CreateCompanyInstallerInstallerDto } from "../src/company-installer/dto/create-company-installer.dto";
 
 describe('User (e2e)', () => {
     let app: INestApplication;
@@ -26,7 +26,7 @@ describe('User (e2e)', () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [
                 CustomerModule,
-                InstallerModule,
+                CompanyInstallerModule,
                 SeedModule,
                 AppModule
             ],
@@ -194,7 +194,7 @@ describe('User (e2e)', () => {
     describe('installerController', () => {
         describe('/installer (POST)', () => {
             it('should create a new installer', async () => {
-                const createDtoInstaller: CreateInstallerDto = {
+                const createDtoInstaller: CreateCompanyInstallerInstallerDto = {
                     name: 'Test',
                     lastName: 'Test',
                     email: 'test@me.com',
@@ -223,7 +223,7 @@ describe('User (e2e)', () => {
             })
 
             it('should return 400 if the user sends the same email', async () => {
-                const createDtoInstaller: CreateInstallerDto = {
+                const createDtoInstaller: CreateCompanyInstallerInstallerDto = {
                     name: 'Test',
                     lastName: 'Test',
                     email: 'test@me.com',
@@ -252,7 +252,7 @@ describe('User (e2e)', () => {
             })
 
             it('should return 400 if the user sends the same rfc', async () => {
-                const createDtoInstaller: CreateInstallerDto = {
+                const createDtoInstaller: CreateCompanyInstallerInstallerDto = {
                     name: 'Test',
                     lastName: 'Test',
                     email: 'test1@me.com',

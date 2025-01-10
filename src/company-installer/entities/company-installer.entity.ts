@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 
 @Schema()
-export class Installer extends Document{
+export class CompanyInstaller extends Document{
     @Prop({
         required: true,
         trim: true
@@ -83,4 +83,4 @@ export class Installer extends Document{
     securityCourses: string;
 }
 
-export const InstallerSchema = SchemaFactory.createForClass(Installer)
+export const CompanyInstallerSchema = SchemaFactory.createForClass(CompanyInstaller)

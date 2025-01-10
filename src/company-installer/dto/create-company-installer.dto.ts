@@ -2,7 +2,7 @@ import { Type } from "class-transformer";
 import { IsBoolean, IsEmail, IsNumber, IsObject, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
 import { ApiProperty } from '@nestjs/swagger';
 
-class InstallerDto {
+class CompanyInstallerDto {
 
     @ApiProperty()
     @IsString()
@@ -69,7 +69,7 @@ class InstallerDto {
     securityCourses: string
 }
 
-export class CreateInstallerDto {
+export class CreateCompanyInstallerInstallerDto {
     @ApiProperty()
     @IsString()
     name: string
@@ -93,8 +93,8 @@ export class CreateInstallerDto {
 
     @ApiProperty()
     @ValidateNested()
-    @Type(() => InstallerDto)
-    installer: InstallerDto
+    @Type(() => CompanyInstallerDto)
+    installer: CompanyInstallerDto
 
 }
 

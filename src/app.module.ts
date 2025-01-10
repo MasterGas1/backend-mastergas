@@ -15,7 +15,7 @@ import { UserModule } from './user/user.module';
 import { CustomerModule } from './customer/customer.module';
 import { validateAuthorizationMiddleware } from './common/middlewares/validateAuthorization.middleware';
 import { AuthModule } from './auth/auth.module';
-import { InstallerModule } from './installer/installer.module';
+import { CompanyInstallerModule } from './company-installer/company-installer.module';
 import { ServiceModule } from './service/service.module';
 import { OrdersModule } from './orders/orders.module';
 import { AddressModule } from './address/address.module';
@@ -57,9 +57,9 @@ import { MessageWsModule } from './message-ws/message-ws.module';
     CustomerModule,
 
     AuthModule,
-
-    InstallerModule,
-
+    
+    CompanyInstallerModule,
+    
     ServiceModule,
 
     OrdersModule,
