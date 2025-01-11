@@ -22,7 +22,7 @@ import { AddressModule } from './address/address.module';
 import { validateTokenInEmailMiddleware } from './common/middlewares/validateTokenInEmail.middleware';
 import { RequestModule } from './request/request.module';
 import { NearInstallerModule } from './near-installer/near-installer.module';
-import { MessageWsModule } from './message-ws/message-ws.module';
+// import { MessageWsModule } from './message-ws/message-ws.module';
 
 @Module({
   imports: [
@@ -70,7 +70,7 @@ import { MessageWsModule } from './message-ws/message-ws.module';
 
     NearInstallerModule,
 
-    MessageWsModule,
+    // MessageWsModule,
   ],
 
   providers: [JwtService],
