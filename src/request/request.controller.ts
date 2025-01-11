@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { RequestService } from './request.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
@@ -13,13 +22,16 @@ export class RequestController {
   }
 
   @Get('/all/installer/token')
-  findAll(@Body() {userId}: {userId: string}) {
+  findAll(@Body() { userId }: { userId: string }) {
     return this.requestService.findAllByToken(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.requestService.findOne(+id);
+  @Get('/all/installer/token/:requestId')
+  findOne(
+    @Param('requestId') requestId: string,
+    @Body() { userId }: { userId: string },
+  ) {
+    return this.requestService.findOneForInstallerByToken(userId, requestId);
   }
 
   @Patch(':id')

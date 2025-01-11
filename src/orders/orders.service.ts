@@ -18,15 +18,19 @@ export class OrdersService {
 
     @InjectModel(Role.name)
     private readonly roleModel: Model<Role>,
+  ) {}
 
-  ) { }
-
-  async create(createOrderDto: CreateOrderDto): Promise<Order | BadRequestException> {
-    const { installerId, customerUserId } = createOrderDto;
+  async create(
+    createOrderDto: CreateOrderDto,
+  ): Promise<Order | BadRequestException> {
+    const { installerId, customerId } = createOrderDto;
 
     const installerRole = await this.roleModel.findOne({ name: 'Installer' });
 
-    const existInstaller = await this.userModel.findOne({ _id: installerId, roleId: installerRole._id });
+    const existInstaller = await this.userModel.findOne({
+      _id: installerId,
+      roleId: installerRole._id,
+    });
 
     if (!existInstaller) {
       throw new BadRequestException('El instalador no existe');
@@ -34,21 +38,41 @@ export class OrdersService {
 
     const customerRole = await this.roleModel.findOne({ name: 'Customer' });
 
-    const existCustomer = await this.userModel.findOne({ _id: customerUserId, roleId: customerRole._id });
+    const existCustomer = await this.userModel.findOne({
+      _id: customerId,
+      roleId: customerRole._id,
+    });
 
     if (!existCustomer) {
       throw new BadRequestException('El cliente no existe');
     }
 
-    return (await this.orderModel.create(createOrderDto)).populate([
+    const newOrder = {
+      ...createOrderDto,
+      state: 'on the way',
+    };
+
+    return (await this.orderModel.create(newOrder)).populate([
       {
         path: 'installerId',
         model: 'User',
+        select: 'name lastName picture score',
+        populate: {
+          path: 'installerId',
+          model: 'Installer',
+          select: 'phoneNumber',
+        },
       },
       {
-        path: 'customerUserId',
+        path: 'customerId',
         model: 'User',
-      }
+        select: 'name lastName picture score',
+      },
+      {
+        path: 'serviceId',
+        model: 'Service',
+        select: 'name price',
+      },
     ]);
   }
 
@@ -61,8 +85,8 @@ export class OrdersService {
       {
         path: 'customerUserId',
         model: 'User',
-      }
-    ])
+      },
+    ]);
     return orders;
   }
 
@@ -75,13 +99,54 @@ export class OrdersService {
       {
         path: 'customerUserId',
         model: 'User',
-      }
+      },
     ]);
 
     if (!order) {
       throw new BadRequestException('La orden no existes');
     }
     return order;
+  }
+
+  async findFirstByTokenInstaller(installerId: string) {
+    const role = await this.roleModel.findOne({ name: 'Installer' });
+    if (!role) {
+      throw new BadRequestException('Execute seed first');
+    }
+    const installer = await this.userModel.findOne({
+      _id: installerId,
+      roleId: role._id,
+    });
+    if (!installer) {
+      throw new BadRequestException('El instalador no existe');
+    }
+    return await this.orderModel
+      .findOne({
+        installerId: installer._id,
+        $or: [{ state: 'pending' }, { state: 'on the way' }],
+      })
+      .populate([
+        {
+          path: 'installerId',
+          model: 'User',
+          select: 'name lastName picture score',
+          populate: {
+            path: 'installerId',
+            model: 'Installer',
+            select: 'phoneNumber',
+          },
+        },
+        {
+          path: 'customerId',
+          model: 'User',
+          select: 'name lastName picture score',
+        },
+        {
+          path: 'serviceId',
+          model: 'Service',
+          select: 'name price',
+        },
+      ]);
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {
