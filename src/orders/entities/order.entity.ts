@@ -1,7 +1,7 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { Service } from 'src/service/entities/service.entity';
-import { User } from 'src/user/entities/user.entity';
+import { Service } from '../../service/entities/service.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Schema()
 export class Coords extends Document {

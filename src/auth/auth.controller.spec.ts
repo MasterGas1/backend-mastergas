@@ -8,6 +8,7 @@ import { RoleService } from '../role/role.service';
 
 import { User } from '../user/entities/user.entity';
 import { Role } from '../role/entities/role.entity';
+import { BadRequestException } from '@nestjs/common';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -21,16 +22,12 @@ describe('AuthController', () => {
         JwtService,
         {
           provide: getModelToken(User.name),
-          useValue: {
-            
-          }
+          useValue: {},
         },
         {
           provide: getModelToken(Role.name),
-          useValue: {
-            
-          }
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 
@@ -48,12 +45,21 @@ describe('AuthController', () => {
         name: 'Manuel',
         lastName: 'Barba',
         token: 'token',
-        role: 'Admin'
-      }
+        role: 'Admin',
+      };
 
       jest.spyOn(controller, 'auth').mockResolvedValue(mockUser);
 
       expect(await controller.auth(createAuthDto)).toBe(mockUser);
-    })
-  })
+    });
+  });
+
+  it('should throw BadRequestException if password is incorrect', async () => {
+    const createAuthDto = { email: 'jdoe@me.com', password: 'password1' };
+    const mockUser = null;
+
+    jest.spyOn(controller, 'auth').mockResolvedValue(mockUser);
+
+    expect(controller.auth(createAuthDto)).rejects.toThrow(BadRequestException);
+  });
 });

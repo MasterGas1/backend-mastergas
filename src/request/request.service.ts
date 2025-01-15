@@ -6,10 +6,10 @@ import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 
 import { Request } from './entities/request.entity';
-import { User } from 'src/user/entities/user.entity';
-import { Role } from 'src/role/entities/role.entity';
-import { NearInstaller } from 'src/near-installer/entities/near-installer.entity';
-import { Service } from 'src/service/entities/service.entity';
+import { User } from '../user/entities/user.entity';
+import { Role } from '../role/entities/role.entity';
+import { NearInstaller } from '../near-installer/entities/near-installer.entity';
+import { Service } from '../service/entities/service.entity';
 import { NearInstallerModule } from '../near-installer/near-installer.module';
 
 @Injectable()

@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { Order } from './entities/order.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from 'src/user/entities/user.entity';
-import { Role } from 'src/role/entities/role.entity';
+
+import { Order } from './entities/order.entity';
+import { User } from '../user/entities/user.entity';
+import { Role } from '../role/entities/role.entity';
 
 @Injectable()
 export class OrdersService {

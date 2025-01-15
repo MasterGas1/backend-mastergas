@@ -3,8 +3,8 @@ import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OrderSchema } from './entities/order.entity';
-import { UserModule } from 'src/user/user.module';
-import { RoleModule } from 'src/role/role.module';
+import { UserModule } from '../user/user.module';
+import { RoleModule } from '../role/role.module';
 
 @Module({
   controllers: [OrdersController],
