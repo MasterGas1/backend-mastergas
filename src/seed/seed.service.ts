@@ -13,7 +13,6 @@ import { roles, userAdmin } from './data/seed-data';
 
 @Injectable()
 export class SeedService {
-
   constructor(
     private readonly roleService: RoleService,
     private readonly userService: UserService,
@@ -36,7 +35,6 @@ export class SeedService {
 
   private async removeAllCollections() {
     await this.roleService.removeAllCollections();
-    await this.userService.removeAllColletions();
   }
 
   private async insertAdmin() {
@@ -46,11 +44,17 @@ export class SeedService {
       throw new NotFoundException('Role not found');
     }
 
+    const getUserAdmin = await this.userModel.findOne({
+      email: userAdmin.email,
+    });
+
+    if (getUserAdmin) {
+      await this.userModel.findOneAndDelete({ email: userAdmin.email });
+    }
+
     userAdmin.password = hashSync(userAdmin.password, 10);
     userAdmin.roleId = role._id;
 
     await this.userModel.create(userAdmin);
-
   }
-
 }

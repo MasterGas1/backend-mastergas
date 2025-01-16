@@ -1,20 +1,28 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
-import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
+import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 
 @Controller('address')
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
-  
+
   @Post()
   create(@Body() createAddressDto: CreateAddressDto) {
     return this.addressService.create(createAddressDto);
   }
 
   @Get()
-  findAll(@Body() {userId}: {userId: string}) {
+  findAll(@Body() { userId }: { userId: string }) {
     return this.addressService.findAll(userId);
   }
 
@@ -24,7 +32,10 @@ export class AddressController {
   }
 
   @Put(':id')
-  update(@Param('id', ParseMongoIdPipe) id: string, @Body() updateAddressDto: UpdateAddressDto) {
+  update(
+    @Param('id', ParseMongoIdPipe) id: string,
+    @Body() updateAddressDto: UpdateAddressDto,
+  ) {
     return this.addressService.update(id, updateAddressDto);
   }
 

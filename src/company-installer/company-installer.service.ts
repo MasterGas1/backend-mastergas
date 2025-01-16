@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -19,11 +23,10 @@ import { Role } from '../role/entities/role.entity';
 import { FROM_EMAIL } from '../constants/email';
 
 import { confirmationRegisterInstallerEmail } from '../templates/email/confirmationRegisterInstallerEmail';
-import { welcomeAndNewPasswordEmail } from 'src/templates/email/welcomeAndNewPasswordEmail';
+import { welcomeAndNewPasswordEmail } from '../templates/email/welcomeAndNewPasswordEmail';
 
 @Injectable()
 export class CompanyInstallerService {
-
   constructor(
     @InjectModel(CompanyInstaller.name)
     private readonly companyInstaller: Model<CompanyInstaller>,
@@ -34,24 +37,22 @@ export class CompanyInstallerService {
     @InjectModel(Role.name)
     private readonly roleModel: Model<Role>,
 
-    @InjectConnection() 
+    @InjectConnection()
     private readonly connection: mongoose.Connection,
 
     private readonly mailService: MailerService,
 
-    private readonly jwtTokenService: JwtService
-  ){}
+    private readonly jwtTokenService: JwtService,
+  ) {}
 
   async create(createInstallerDto: CreateCompanyInstallerInstallerDto) {
-    const {installer, ...user} = createInstallerDto;
+    const { installer, ...user } = createInstallerDto;
 
-    const {email, rfc, name, lastName} = user;
+    const { email, rfc, name, lastName } = user;
 
     const session = await this.connection.startSession();
 
-    
     const role = await this.roleModel.findOne({ name: 'Company Installer' });
-
 
     if (!role) {
       throw new NotFoundException('Execute seed first');
@@ -70,45 +71,47 @@ export class CompanyInstallerService {
     session.startTransaction();
 
     try {
+      const newInstaller = new this.companyInstaller(installer);
 
-    const newInstaller = new this.companyInstaller(installer)
+      await newInstaller.save({ session });
 
-    await newInstaller.save({ session });
+      const randomPassword = Math.random().toString(36).slice(-8);
 
-    const randomPassword = Math.random().toString(36).slice(-8);
+      const userBody = {
+        ...user,
+        roleId: role._id,
+        password: hashSync(randomPassword, 10),
+        status: 'pending',
+        installerId: newInstaller._id,
+      };
 
-    const userBody = {
-      ...user,
-      roleId: role._id,
-      password: hashSync(randomPassword, 10),
-      status: 'pending',
-      installerId: newInstaller._id,
-    };
+      await new this.userModel(userBody).save({ session });
 
-    await new this.userModel(userBody).save({ session });
-
-    await session.commitTransaction();
+      await session.commitTransaction();
     } catch (error) {
-        await session.abortTransaction();
-        throw error;
+      await session.abortTransaction();
+      throw error;
     } finally {
-        session.endSession();
+      session.endSession();
     }
 
     await this.mailService.sendMail({
       from: FROM_EMAIL,
       to: email,
-      subject: "MasterGas23: Confirmación de solicitud",
-      html: confirmationRegisterInstallerEmail(name,lastName)
-    })
+      subject: 'MasterGas23: Confirmación de solicitud',
+      html: confirmationRegisterInstallerEmail(name, lastName),
+    });
 
-    return {msg: "Installer was created"};
-
+    return { msg: 'Installer was created' };
   }
 
   async findAll(status: string) {
-
-    if (status !== 'pending' && status !== 'approved' && status !== 'rejected' && status !== undefined) {
+    if (
+      status !== 'pending' &&
+      status !== 'approved' &&
+      status !== 'rejected' &&
+      status !== undefined
+    ) {
       throw new BadRequestException('Status no valid');
     }
 
@@ -118,13 +121,14 @@ export class CompanyInstallerService {
 
     const roleId = await this.roleModel.findOne({ name: 'Installer' });
 
-    const installers = await this.userModel.find({roleId: roleId._id, status })
+    const installers = await this.userModel
+      .find({ roleId: roleId._id, status })
       .populate([
         {
           path: 'installerId',
           select: 'companyName -_id',
-          model: CompanyInstaller.name
-        }
+          model: CompanyInstaller.name,
+        },
       ])
       .select('-password -roleId -__v');
 
@@ -132,86 +136,114 @@ export class CompanyInstallerService {
   }
 
   async findOne(id: string) {
-    const role = await this.roleModel.findOne({name: 'Installer'});
+    const role = await this.roleModel.findOne({ name: 'Installer' });
 
-    const installer = await this.userModel.findOne({_id: id, roleId: role._id})
-    .populate([
-      {
-        path: 'roleId',
-        model: Role.name,
-        select: 'name -_id'
-      },
-      {
-        path: 'installerId',
-        model: CompanyInstaller.name,
-        select: '-password -status -__v -_id'
-      }
-    ]);
+    const installer = await this.userModel
+      .findOne({ _id: id, roleId: role._id })
+      .populate([
+        {
+          path: 'roleId',
+          model: Role.name,
+          select: 'name -_id',
+        },
+        {
+          path: 'installerId',
+          model: CompanyInstaller.name,
+          select: '-password -status -__v -_id',
+        },
+      ]);
 
     if (!installer) {
       throw new NotFoundException('Instalador no encontrado');
     }
 
-    return installer
+    return installer;
   }
 
-  async updateStatus(id: string, updateInstallerStatusDto: UpdateStatusCompanyInstallerInstallerDto) {
-    const role = await this.roleModel.findOne({name: 'Installer'});
+  async updateStatus(
+    id: string,
+    updateInstallerStatusDto: UpdateStatusCompanyInstallerInstallerDto,
+  ) {
+    const role = await this.roleModel.findOne({ name: 'Installer' });
 
     if (!role) {
       throw new NotFoundException('Execute seed first');
     }
 
-    const installer = await this.userModel.findOne({_id: id, roleId: role._id});
+    const installer = await this.userModel.findOne({
+      _id: id,
+      roleId: role._id,
+    });
 
     if (!installer) {
       throw new NotFoundException('Instalador no encontrado');
     }
 
     const { status } = updateInstallerStatusDto;
-    
+
     if (status === 'approved' && installer.status === 'pending') {
+      await this.userModel.findOneAndUpdate(
+        { _id: id, roleId: role._id },
+        { status, updatePassword: true },
+      );
 
-      await this.userModel.findOneAndUpdate({_id: id, roleId: role._id}, { status, updatePassword: true });
+      const token = this.jwtTokenService.sign({ id: id });
 
-      const token = this.jwtTokenService.sign({id: id})
-
-      this.sendNewPassword(installer.email, installer.name, installer.lastName, token);
+      this.sendNewPassword(
+        installer.email,
+        installer.name,
+        installer.lastName,
+        token,
+      );
     } else {
       throw new BadRequestException('Status no valid');
     }
 
-    return {msg: 'Status actualizado'};
+    return { msg: 'Status actualizado' };
   }
 
-  async updateCoordinatesByToken(updateCoordinatesInstallerDto: UpdateCoordinatesInstallerDto) {
-    
+  async updateCoordinatesByToken(
+    updateCoordinatesInstallerDto: UpdateCoordinatesInstallerDto,
+  ) {
     const { userId, longitude, latitude } = updateCoordinatesInstallerDto;
 
-    if ((longitude < -180 || longitude > 180) || (latitude < -90 || latitude > 90)) {
-      throw new BadRequestException('Send coordinates in longitude [-180, 180] and latitude [-90, 90]');
+    if (
+      longitude < -180 ||
+      longitude > 180 ||
+      latitude < -90 ||
+      latitude > 90
+    ) {
+      throw new BadRequestException(
+        'Send coordinates in longitude [-180, 180] and latitude [-90, 90]',
+      );
     }
 
-    const role = await this.roleModel.findOne({name: 'Installer'});
+    const role = await this.roleModel.findOne({ name: 'Installer' });
 
     if (!role) {
       throw new NotFoundException('Execute seed first');
     }
 
-    const installer = await this.userModel.findOne({_id: userId, roleId: role._id});
+    const installer = await this.userModel.findOne({
+      _id: userId,
+      roleId: role._id,
+    });
 
     if (!installer) {
       throw new NotFoundException('Instalador no encontrado');
     }
 
-    await this.userModel.findOneAndUpdate({_id: userId}, { coordinates: [longitude, latitude] });
+    await this.userModel.findOneAndUpdate(
+      { _id: userId },
+      { coordinates: [longitude, latitude] },
+    );
 
-    return {msg: 'Coordenadas actualizadas'}
+    return { msg: 'Coordenadas actualizadas' };
   }
 
   async remove(id: string) {
-    const role = await this.roleModel.findOne({name: 'Installer'});
-    
+    const role = await this.roleModel.findOne({ name: 'Installer' });
+
     if (!role) {
       throw new NotFoundException('Execute seed first');
     }
@@ -226,27 +258,33 @@ export class CompanyInstallerService {
     session.startTransaction();
     try {
       await this.userModel.findByIdAndDelete(id, { session });
-      
-      await this.companyInstaller.findByIdAndDelete(user.installerId, { session });
+
+      await this.companyInstaller.findByIdAndDelete(user.installerId, {
+        session,
+      });
 
       await session.commitTransaction();
     } catch (error) {
-        await session.abortTransaction();
-        throw error;
+      await session.abortTransaction();
+      throw error;
     } finally {
-        session.endSession();
+      session.endSession();
     }
 
-    return {msg: 'Instalador eliminado'}
+    return { msg: 'Instalador eliminado' };
   }
 
-  async sendNewPassword(email: string, name: string, lastName: string, token: string) {
-
+  async sendNewPassword(
+    email: string,
+    name: string,
+    lastName: string,
+    token: string,
+  ) {
     await this.mailService.sendMail({
       from: FROM_EMAIL,
       to: email,
-      subject: "MasterGas23: Bienvenido a MasterGas23",
-      html: welcomeAndNewPasswordEmail(name,lastName, email, token)
-    })
+      subject: 'MasterGas23: Bienvenido a MasterGas23',
+      html: welcomeAndNewPasswordEmail(name, lastName, email, token),
+    });
   }
 }

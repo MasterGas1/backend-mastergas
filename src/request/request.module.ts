@@ -6,10 +6,10 @@ import { Request, RequestSchema } from './entities/request.entity';
 import { RequestService } from './request.service';
 import { RequestController } from './request.controller';
 
-import { UserModule } from 'src/user/user.module';
-import { ServiceModule } from 'src/service/service.module';
-import { RoleModule } from 'src/role/role.module';
-import { NearInstallerModule } from 'src/near-installer/near-installer.module';
+import { UserModule } from '../user/user.module';
+import { ServiceModule } from '../service/service.module';
+import { RoleModule } from '../role/role.module';
+import { NearInstallerModule } from '../near-installer/near-installer.module';
 
 @Module({
   controllers: [RequestController],

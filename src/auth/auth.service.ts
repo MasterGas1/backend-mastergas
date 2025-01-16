@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -10,10 +14,8 @@ import { User } from '../user/entities/user.entity';
 
 import { Role } from '../role/entities/role.entity';
 
-
 @Injectable()
 export class AuthService {
-
   constructor(
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
@@ -21,11 +23,11 @@ export class AuthService {
     @InjectModel(Role.name)
     private readonly roleModule: Model<Role>,
 
-    private readonly jwtTokenService: JwtService
+    private readonly jwtTokenService: JwtService,
   ) {}
 
   async auth(createAuthDto: CreateAuthDto) {
-    const {email, password} = createAuthDto;
+    const { email, password } = createAuthDto;
 
     const user = await this.userModel.findOne({ email });
 
@@ -39,8 +41,12 @@ export class AuthService {
 
     const role = await this.roleModule.findById(user.roleId);
 
-    const token = this.jwtTokenService.sign({id: user._id})
+    if (!role) {
+      throw new NotFoundException('Execute seed first');
+    }
 
-    return {name: user.name, lastName: user.lastName, token, role: role.name};
+    const token = this.jwtTokenService.sign({ id: user._id });
+
+    return { name: user.name, lastName: user.lastName, token, role: role.name };
   }
 }
